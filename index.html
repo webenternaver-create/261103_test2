@@ -1,0 +1,1354 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>내 업무 플래너</title>
+  <meta name="description" content="개인 업무를 등록하고 마감일과 우선순위, 완료 상태를 관리하는 간결하고 신뢰성 높은 한국어 업무용 플래너" />
+  <meta property="og:title" content="내 업무 플래너" />
+  <meta property="og:description" content="개인 업무를 등록하고 마감일과 우선순위, 완료 상태를 관리하는 간결하고 신뢰성 높은 한국어 업무용 플래너" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    /* CSS Reset & Base System */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-sub: #475569;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --danger-text: #b91c1c;
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --warning-text: #b45309;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --success-border: #a7f3d0;
+      --success-text: #047857;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 24px 16px 60px;
+    }
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    header {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+    }
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--primary);
+      color: white;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+    .brand-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+    }
+    .date-badge {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-sub);
+      background: #f1f5f9;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+    .header-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* Storage notice */
+    .storage-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: var(--text-sub);
+    }
+    .storage-banner svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      color: var(--primary);
+    }
+    .storage-error-alert {
+      display: none;
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger-text);
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Input Section */
+    .form-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+    .form-header {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-header svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+    .req {
+      color: var(--danger);
+      margin-left: 2px;
+    }
+    .input-text {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .input-text:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .input-text.error {
+      border-color: var(--danger);
+      background-color: #fffafb;
+    }
+    .error-msg {
+      display: none;
+      font-size: 0.82rem;
+      color: var(--danger);
+      margin-top: 6px;
+      font-weight: 500;
+      align-items: center;
+      gap: 4px;
+    }
+    .error-msg.visible {
+      display: flex;
+    }
+
+    /* Form Row: Priority & Due Date */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 640px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Priority Selector */
+    .priority-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .priority-btn {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+    }
+    .priority-btn input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .priority-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      background: #ffffff;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+    .p-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .dot-high { background-color: var(--danger); }
+    .dot-normal { background-color: var(--primary); }
+    .dot-low { background-color: #64748b; }
+
+    .priority-btn input[type="radio"]:checked + .priority-label.p-high {
+      border-color: var(--danger);
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.12);
+    }
+    .priority-btn input[type="radio"]:checked + .priority-label.p-normal {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+    }
+    .priority-btn input[type="radio"]:checked + .priority-label.p-low {
+      border-color: #64748b;
+      background: #f1f5f9;
+      color: #334155;
+      box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.12);
+    }
+
+    /* Due Date Input */
+    .date-input-wrap {
+      display: flex;
+      gap: 8px;
+    }
+    .input-date {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      color: var(--text-main);
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none;
+      font-family: inherit;
+    }
+    .input-date:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .btn-clear-date {
+      padding: 0 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: #f8fafc;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .btn-clear-date:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+    .quick-dates {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .btn-quick-date {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .btn-quick-date:hover {
+      text-decoration: underline;
+      background: var(--primary-light);
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 13px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    }
+    .btn-submit:active {
+      transform: translateY(1px);
+    }
+    .btn-submit svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Summary Metrics Bar */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 640px) {
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .stat-card:nth-child(4), .stat-card:nth-child(5) {
+        grid-column: span 1;
+      }
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .stat-card:hover {
+      border-color: var(--primary-border);
+      background: #fbfdff;
+    }
+    .stat-card.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1;
+    }
+    .stat-card.stat-today .stat-value { color: var(--warning-text); }
+    .stat-card.stat-overdue .stat-value { color: var(--danger-text); }
+    .stat-card.stat-done .stat-value { color: var(--success-text); }
+
+    /* Filter & Controls Bar */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+      background: #e2e8f0;
+      padding: 3px;
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+    .filter-tab {
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .filter-tab.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .sort-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sort-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .select-sort {
+      padding: 6px 10px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      color: var(--text-main);
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Task List Card */
+    .task-list-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 8px 16px;
+      box-shadow: var(--shadow-sm);
+      min-height: 220px;
+    }
+    .task-list {
+      list-style: none;
+    }
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 8px;
+      border-bottom: 1px solid #f1f5f9;
+      gap: 14px;
+      transition: background 0.15s ease;
+    }
+    .task-item:last-child {
+      border-bottom: none;
+    }
+    .task-item:hover {
+      background: #fafbfd;
+      border-radius: var(--radius-md);
+    }
+    .task-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Custom Checkbox */
+    .custom-checkbox {
+      margin-top: 3px;
+      position: relative;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .custom-checkbox input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    .checkbox-box {
+      width: 22px;
+      height: 22px;
+      border: 2px solid #94a3b8;
+      border-radius: 6px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .custom-checkbox input:checked + .checkbox-box {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .checkbox-box svg {
+      width: 14px;
+      height: 14px;
+      stroke: #ffffff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: all 0.15s ease;
+    }
+    .custom-checkbox input:checked + .checkbox-box svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Task Content */
+    .task-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .task-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text-main);
+      word-break: break-word;
+      line-height: 1.45;
+      margin-bottom: 6px;
+      transition: all 0.15s ease;
+    }
+    .task-item.completed .task-title {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+    .task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    /* Priority Badges */
+    .badge-priority-high {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border-color: var(--danger-border);
+    }
+    .badge-priority-normal {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary-border);
+    }
+    .badge-priority-low {
+      background: #f1f5f9;
+      color: var(--text-sub);
+      border-color: #cbd5e1;
+    }
+
+    /* Status & Due Badges */
+    .badge-due-overdue {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border-color: var(--danger-border);
+      font-weight: 700;
+    }
+    .badge-due-today {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      border-color: var(--warning-border);
+      font-weight: 700;
+    }
+    .badge-due-upcoming {
+      background: #f8fafc;
+      color: var(--text-sub);
+      border-color: var(--border);
+    }
+    .badge-due-none {
+      background: #f8fafc;
+      color: #94a3b8;
+      border-color: var(--border);
+    }
+    .badge-completed {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border-color: var(--success-border);
+    }
+
+    /* Task Actions */
+    .task-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-delete {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #94a3b8;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .btn-delete:hover {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: var(--danger-border);
+    }
+    .btn-delete svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      padding: 56px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .empty-icon {
+      width: 64px;
+      height: 64px;
+      background: #eff6ff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: var(--primary);
+    }
+    .empty-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+    .empty-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .empty-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 360px;
+      margin: 0 auto 18px;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Storage Error Notification -->
+    <div id="storageErrorAlert" class="storage-error-alert" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;flex-shrink:0;">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span>저장되지 않았습니다. 브라우저의 저장 공간이나 쿠키 설정을 확인해주세요.</span>
+    </div>
+
+    <!-- Header -->
+    <header>
+      <div class="header-top">
+        <div class="brand-title">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="m9 14 2 2 4-4"></path>
+            </svg>
+          </div>
+          <div>
+            <h1>내 업무 플래너</h1>
+            <p class="header-desc">개인 업무를 체계적으로 등록하고 마감일과 상태를 관리하세요</p>
+          </div>
+        </div>
+        <div id="currentDateBadge" class="date-badge"></div>
+      </div>
+      <div class="storage-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <span>이 브라우저에 저장되며 다른 기기와 자동 동기화되지 않습니다.</span>
+      </div>
+    </header>
+
+    <!-- Task Input Section -->
+    <section class="form-card" aria-labelledby="formTitle">
+      <div class="form-header" id="formTitle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+        <span>새 업무 등록</span>
+      </div>
+
+      <form id="taskForm" onsubmit="handleAddTask(event)">
+        <!-- Task Title -->
+        <div class="form-group">
+          <label for="taskTitleInput">업무명<span class="req">*</span></label>
+          <input 
+            type="text" 
+            id="taskTitleInput" 
+            class="input-text" 
+            placeholder="업무명을 입력하세요 (예: 4분기 기획안 검토, 클라이언트 피드백 반영)" 
+            autocomplete="off"
+            maxlength="150"
+          />
+          <div id="titleErrorMsg" class="error-msg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span id="titleErrorText">업무명을 1자 이상 입력해주세요 (공백만으로는 등록할 수 없습니다).</span>
+          </div>
+        </div>
+
+        <!-- Priority & Due Date -->
+        <div class="form-row">
+          <!-- Priority Selector -->
+          <div class="form-group" style="margin-bottom:0;">
+            <label>우선순위</label>
+            <div class="priority-options">
+              <label class="priority-btn">
+                <input type="radio" name="priority" value="high" />
+                <span class="priority-label p-high">
+                  <span class="p-dot dot-high"></span>
+                  높음
+                </span>
+              </label>
+              <label class="priority-btn">
+                <input type="radio" name="priority" value="normal" checked />
+                <span class="priority-label p-normal">
+                  <span class="p-dot dot-normal"></span>
+                  보통
+                </span>
+              </label>
+              <label class="priority-btn">
+                <input type="radio" name="priority" value="low" />
+                <span class="priority-label p-low">
+                  <span class="p-dot dot-low"></span>
+                  낮음
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Due Date Picker -->
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="dueDateInput">마감일 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(선택)</span></label>
+            <div class="date-input-wrap">
+              <input type="date" id="dueDateInput" class="input-date" />
+              <button type="button" class="btn-clear-date" onclick="clearDueDate()" title="마감일 비우기">지우기</button>
+            </div>
+            <div class="quick-dates">
+              <button type="button" class="btn-quick-date" onclick="setQuickDate(0)">오늘</button>
+              <button type="button" class="btn-quick-date" onclick="setQuickDate(1)">내일</button>
+              <button type="button" class="btn-quick-date" onclick="setQuickDate(7)">7일 뒤</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          업무 등록하기
+        </button>
+      </form>
+    </section>
+
+    <!-- Stats Summary Cards -->
+    <div class="stats-grid">
+      <div class="stat-card active" data-filter="all" onclick="setFilter('all')">
+        <div class="stat-label">전체 업무</div>
+        <div id="statAll" class="stat-value">0</div>
+      </div>
+      <div class="stat-card" data-filter="pending" onclick="setFilter('pending')">
+        <div class="stat-label">진행 중</div>
+        <div id="statPending" class="stat-value">0</div>
+      </div>
+      <div class="stat-card stat-today" data-filter="today" onclick="setFilter('today')">
+        <div class="stat-label">오늘 마감</div>
+        <div id="statToday" class="stat-value">0</div>
+      </div>
+      <div class="stat-card stat-overdue" data-filter="overdue" onclick="setFilter('overdue')">
+        <div class="stat-label">기한 지남</div>
+        <div id="statOverdue" class="stat-value">0</div>
+      </div>
+      <div class="stat-card stat-done" data-filter="completed" onclick="setFilter('completed')">
+        <div class="stat-label">완료됨</div>
+        <div id="statCompleted" class="stat-value">0</div>
+      </div>
+    </div>
+
+    <!-- Controls: Filter & Sort -->
+    <div class="controls-bar">
+      <div class="filter-tabs" role="tablist">
+        <button class="filter-tab active" data-filter="all" onclick="setFilter('all')">전체</button>
+        <button class="filter-tab" data-filter="pending" onclick="setFilter('pending')">진행 중</button>
+        <button class="filter-tab" data-filter="today" onclick="setFilter('today')">오늘 마감</button>
+        <button class="filter-tab" data-filter="overdue" onclick="setFilter('overdue')">기한 지남</button>
+        <button class="filter-tab" data-filter="completed" onclick="setFilter('completed')">완료됨</button>
+      </div>
+
+      <div class="sort-wrap">
+        <span class="sort-label">정렬:</span>
+        <select id="sortSelect" class="select-sort" onchange="handleSortChange(this.value)">
+          <option value="created-desc">최신 등록순</option>
+          <option value="due-asc">마감일 임박순</option>
+          <option value="priority-desc">우선순위 높은순</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Task List -->
+    <section class="task-list-card" aria-label="업무 목록">
+      <ul id="taskList" class="task-list">
+        <!-- Rendered by JavaScript -->
+      </ul>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h3 id="emptyTitle" class="empty-title">등록된 업무가 없습니다</h3>
+        <p id="emptyDesc" class="empty-desc">상단 입력창에서 업무를 등록하고 오늘 할 일을 시작해보세요.</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      내 업무 플래너 &copy; 2026 &bull; 로컬 브라우저 전용 &bull; 단일 파일 독립 실행 지원
+    </footer>
+  </div>
+
+  <script>
+    /*
+     * 내 업무 플래너 (My Work Planner)
+     * 완전한 단일 HTML 파일 독립 실행 구현 (No external dependencies)
+     */
+    
+    // 로컬 스토리지 키
+    const STORAGE_KEY = 'my_work_planner_tasks_v1';
+
+    // 전역 상태
+    let tasks = [];
+    let currentFilter = 'all';
+    let currentSort = 'created-desc';
+
+    // 날짜 헬퍼: 사용자의 로컬 날짜 기준 'YYYY-MM-DD' 반환
+    function getLocalDateString(dateObj = new Date()) {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    // 날짜 포맷팅: '2026. 11. 03'
+    function formatDateKorean(dateString) {
+      if (!dateString) return '마감일 없음';
+      const parts = dateString.split('-');
+      if (parts.length === 3) {
+        return `${parts[0]}. ${parseInt(parts[1], 10)}. ${parseInt(parts[2], 10)}`;
+      }
+      return dateString;
+    }
+
+    // 헤더 오늘 날짜 표시
+    function initHeaderDate() {
+      const now = new Date();
+      const days = ['일', '월', '화', '수', '목', '금', '토'];
+      const dateText = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+      const el = document.getElementById('currentDateBadge');
+      if (el) el.textContent = dateText;
+    }
+
+    // 로컬스토리지 불러오기 (초기 빈 목록 시작 보장)
+    function loadTasks() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) {
+            tasks = parsed;
+          }
+        }
+      } catch (err) {
+        console.error('로컬스토리지 로드 실패:', err);
+        showStorageError();
+      }
+    }
+
+    // 로컬스토리지 저장
+    function saveTasks() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        hideStorageError();
+        return true;
+      } catch (err) {
+        console.error('로컬스토리지 저장 실패:', err);
+        showStorageError();
+        return false;
+      }
+    }
+
+    // 저장 실패 경고 표시
+    function showStorageError() {
+      const alertBox = document.getElementById('storageErrorAlert');
+      if (alertBox) alertBox.style.display = 'flex';
+    }
+    function hideStorageError() {
+      const alertBox = document.getElementById('storageErrorAlert');
+      if (alertBox) alertBox.style.display = 'none';
+    }
+
+    // 신규 업무 등록 핸들러
+    function handleAddTask(e) {
+      e.preventDefault();
+      const titleInput = document.getElementById('taskTitleInput');
+      const errorMsg = document.getElementById('titleErrorMsg');
+      const errorText = document.getElementById('titleErrorText');
+      const rawTitle = titleInput.value;
+      const trimmedTitle = rawTitle.trim();
+
+      // 규칙 1: 공백만 있는 제목 막고 이유 안내
+      if (!trimmedTitle) {
+        titleInput.classList.add('error');
+        if (rawTitle.length > 0) {
+          errorText.textContent = '공백(스페이스)만으로는 업무를 등록할 수 없습니다. 내용을 입력해주세요.';
+        } else {
+          errorText.textContent = '업무명을 1자 이상 입력해주세요.';
+        }
+        errorMsg.classList.add('visible');
+        titleInput.focus();
+        return;
+      }
+
+      // 에러 상태 초기화
+      titleInput.classList.remove('error');
+      errorMsg.classList.remove('visible');
+
+      // 우선순위 읽기 (기본값 normal)
+      const priorityRadio = document.querySelector('input[name="priority"]:checked');
+      const priority = priorityRadio ? priorityRadio.value : 'normal';
+
+      // 마감일 읽기
+      const dueDateInput = document.getElementById('dueDateInput');
+      const dueDate = dueDateInput.value || null;
+
+      // 새 업무 객체 생성 (고유 ID)
+      const newTask = {
+        id: 'task_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8),
+        title: trimmedTitle,
+        priority: priority, // 'high' | 'normal' | 'low'
+        dueDate: dueDate,   // 'YYYY-MM-DD' or null
+        completed: false,
+        createdAt: Date.now()
+      };
+
+      // 목록 앞에 추가
+      tasks.unshift(newTask);
+
+      // 즉시 저장
+      const saved = saveTasks();
+      if (!saved) {
+        showStorageError();
+      }
+
+      // 입력 폼 초기화
+      titleInput.value = '';
+      const normalRadio = document.querySelector('input[name="priority"][value="normal"]');
+      if (normalRadio) normalRadio.checked = true;
+      dueDateInput.value = '';
+
+      // UI 다시 렌더링
+      render();
+      titleInput.focus();
+    }
+
+    // 업무 완료 상태 토글
+    function toggleTask(id) {
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.completed = !task.completed;
+        saveTasks();
+        render();
+      }
+    }
+
+    // 개별 업무 삭제
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      saveTasks();
+      render();
+    }
+
+    // 날짜 입력 지우기
+    function clearDueDate() {
+      const el = document.getElementById('dueDateInput');
+      if (el) el.value = '';
+    }
+
+    // 빠른 날짜 선택
+    function setQuickDate(offsetDays) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      const str = getLocalDateString(d);
+      const el = document.getElementById('dueDateInput');
+      if (el) el.value = str;
+    }
+
+    // 필터 변경
+    function setFilter(filterName) {
+      currentFilter = filterName;
+
+      // 탭 스타일 업데이트
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        if (tab.dataset.filter === filterName) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      // 통계 카드 active 업데이트
+      document.querySelectorAll('.stat-card').forEach(card => {
+        if (card.dataset.filter === filterName) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
+
+      render();
+    }
+
+    // 정렬 변경
+    function handleSortChange(sortVal) {
+      currentSort = sortVal;
+      render();
+    }
+
+    // 업무 상태 판별 (핵심 날짜 규칙 적용)
+    function getTaskStatusInfo(task, todayStr) {
+      // 1. 완료된 업무는 '기한 지남' 표시에서 제외!
+      if (task.completed) {
+        return {
+          type: 'completed',
+          label: '완료됨',
+          badgeClass: 'badge-completed'
+        };
+      }
+
+      // 2. 마감일 없는 경우
+      if (!task.dueDate) {
+        return {
+          type: 'none',
+          label: '마감일 없음',
+          badgeClass: 'badge-due-none'
+        };
+      }
+
+      // 3. 오늘 이전 날짜의 미완료 업무만 '기한 지남'
+      if (task.dueDate < todayStr) {
+        return {
+          type: 'overdue',
+          label: '기한 지남',
+          badgeClass: 'badge-due-overdue'
+        };
+      }
+
+      // 4. 오늘 날짜는 '오늘 마감' (오늘을 기한 지남으로 표시하지 마)
+      if (task.dueDate === todayStr) {
+        return {
+          type: 'today',
+          label: '오늘 마감',
+          badgeClass: 'badge-due-today'
+        };
+      }
+
+      // 5. 미래 날짜: D-Day 계산
+      const dueObj = new Date(task.dueDate + 'T00:00:00');
+      const todayObj = new Date(todayStr + 'T00:00:00');
+      const diffDays = Math.ceil((dueObj - todayObj) / (1000 * 60 * 60 * 24));
+      return {
+        type: 'upcoming',
+        label: `D-${diffDays} (${formatDateKorean(task.dueDate)})`,
+        badgeClass: 'badge-due-upcoming'
+      };
+    }
+
+    // 우선순위 라벨 정보
+    function getPriorityInfo(priority) {
+      switch(priority) {
+        case 'high':
+          return { label: '높음', badgeClass: 'badge-priority-high', dotClass: 'dot-high' };
+        case 'low':
+          return { label: '낮음', badgeClass: 'badge-priority-low', dotClass: 'dot-low' };
+        case 'normal':
+        default:
+          return { label: '보통', badgeClass: 'badge-priority-normal', dotClass: 'dot-normal' };
+      }
+    }
+
+    // 렌더링 함수
+    function render() {
+      const todayStr = getLocalDateString();
+
+      // 통계 계산
+      let totalCount = tasks.length;
+      let pendingCount = 0;
+      let todayCount = 0;
+      let overdueCount = 0;
+      let completedCount = 0;
+
+      tasks.forEach(t => {
+        if (t.completed) {
+          completedCount++;
+        } else {
+          pendingCount++;
+          if (t.dueDate === todayStr) {
+            todayCount++;
+          } else if (t.dueDate && t.dueDate < todayStr) {
+            overdueCount++;
+          }
+        }
+      });
+
+      document.getElementById('statAll').textContent = totalCount;
+      document.getElementById('statPending').textContent = pendingCount;
+      document.getElementById('statToday').textContent = todayCount;
+      document.getElementById('statOverdue').textContent = overdueCount;
+      document.getElementById('statCompleted').textContent = completedCount;
+
+      // 필터링 적용
+      let filtered = tasks.filter(t => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'completed') return t.completed;
+        if (currentFilter === 'pending') return !t.completed;
+        if (currentFilter === 'today') return !t.completed && t.dueDate === todayStr;
+        if (currentFilter === 'overdue') return !t.completed && t.dueDate && t.dueDate < todayStr;
+        return true;
+      });
+
+      // 정렬 적용
+      filtered.sort((a, b) => {
+        if (currentSort === 'created-desc') {
+          return b.createdAt - a.createdAt;
+        }
+        if (currentSort === 'priority-desc') {
+          const pOrder = { high: 3, normal: 2, low: 1 };
+          return (pOrder[b.priority] || 2) - (pOrder[a.priority] || 2);
+        }
+        if (currentSort === 'due-asc') {
+          // 마감일 임박순 (마감일 있는 항목 먼저, 없으면 맨 뒤)
+          if (!a.dueDate && !b.dueDate) return 0;
+          if (!a.dueDate) return 1;
+          if (!b.dueDate) return -1;
+          return a.dueDate.localeCompare(b.dueDate);
+        }
+        return 0;
+      });
+
+      const listEl = document.getElementById('taskList');
+      const emptyStateEl = document.getElementById('emptyState');
+      const emptyTitleEl = document.getElementById('emptyTitle');
+      const emptyDescEl = document.getElementById('emptyDesc');
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '';
+        emptyStateEl.style.display = 'flex';
+        if (totalCount === 0) {
+          emptyTitleEl.textContent = '등록된 업무가 없습니다';
+          emptyDescEl.textContent = '상단 입력창에서 업무를 등록하고 오늘 할 일을 시작해보세요.';
+        } else {
+          emptyTitleEl.textContent = '해당 조건의 업무가 없습니다';
+          emptyDescEl.textContent = '다른 필터를 선택하거나 새로운 업무를 등록해 보세요.';
+        }
+      } else {
+        emptyStateEl.style.display = 'none';
+        listEl.innerHTML = filtered.map(task => {
+          const statusInfo = getTaskStatusInfo(task, todayStr);
+          const pInfo = getPriorityInfo(task.priority);
+          const isDone = task.completed;
+
+          // XSS 방지 HTML escape
+          const safeTitle = task.title
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
+          return `
+            <li class="task-item ${isDone ? 'completed' : ''}" id="${task.id}">
+              <div class="task-left">
+                <label class="custom-checkbox" title="${isDone ? '완료 취소하기' : '완료로 표시하기'}">
+                  <input 
+                    type="checkbox" 
+                    ${isDone ? 'checked' : ''} 
+                    onchange="toggleTask('${task.id}')"
+                    aria-label="${safeTitle} 완료 여부"
+                  />
+                  <div class="checkbox-box">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                </label>
+                <div class="task-content">
+                  <div class="task-title">${safeTitle}</div>
+                  <div class="task-meta">
+                    <!-- 우선순위 뱃지 (색상 + 글자) -->
+                    <span class="badge ${pInfo.badgeClass}">
+                      <span class="p-dot ${pInfo.dotClass}"></span>
+                      우선순위: ${pInfo.label}
+                    </span>
+
+                    <!-- 마감일 및 상태 뱃지 -->
+                    <span class="badge ${statusInfo.badgeClass}">
+                      ${statusInfo.type === 'overdue' ? '⚠️ ' : ''}${statusInfo.label}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="task-right">
+                <button 
+                  type="button" 
+                  class="btn-delete" 
+                  onclick="deleteTask('${task.id}')" 
+                  title="이 업무 삭제"
+                  aria-label="업무 삭제"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                  <span>삭제</span>
+                </button>
+              </div>
+            </li>
+          `;
+        }).join('');
+      }
+    }
+
+    // 제목 입력 필드 실시간 에러 해제
+    document.getElementById('taskTitleInput').addEventListener('input', function() {
+      if (this.value.trim().length > 0) {
+        this.classList.remove('error');
+        document.getElementById('titleErrorMsg').classList.remove('visible');
+      }
+    });
+
+    // 초기 실행
+    window.addEventListener('DOMContentLoaded', () => {
+      initHeaderDate();
+      loadTasks();
+      render();
+    });
+  </script>
+</body>
+</html>
