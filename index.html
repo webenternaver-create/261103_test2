@@ -86,13 +86,13 @@
       margin: 0 auto;
     }
 
-    /* Apple-style Header */
+    /* Apple-style Header (내 업무 플래너 박스 - 라이트 그린 적용) */
     header {
-      background: var(--apple-card);
+      background: #edf9f0; /* Apple Light Green */
       border-radius: var(--radius-xl);
       padding: 26px 30px;
-      border: 1px solid var(--apple-border-subtle);
-      box-shadow: var(--shadow-apple-card);
+      border: 1px solid #c6ebd0;
+      box-shadow: 0 4px 20px -2px rgba(52, 199, 89, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
       margin-bottom: 20px;
       transition: all 0.25s var(--ease-apple);
     }
@@ -115,12 +115,12 @@
       width: 44px;
       height: 44px;
       border-radius: 12px;
-      background: linear-gradient(145deg, #0077ed 0%, #0071e3 100%);
+      background: linear-gradient(145deg, #34c759 0%, #28a745 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
       flex-shrink: 0;
     }
 
@@ -133,13 +133,13 @@
       font-size: 1.65rem;
       font-weight: 700;
       letter-spacing: -0.025em;
-      color: var(--apple-text-primary);
+      color: #15381f;
       line-height: 1.2;
     }
 
     .header-sub {
       font-size: 0.88rem;
-      color: var(--apple-text-secondary);
+      color: #40694c;
       margin-top: 2px;
       font-weight: 400;
     }
@@ -148,20 +148,21 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--apple-gray-6);
-      color: var(--apple-text-secondary);
+      background: rgba(255, 255, 255, 0.85);
+      color: #235832;
       font-size: 0.82rem;
-      font-weight: 500;
+      font-weight: 600;
       padding: 6px 14px;
       border-radius: var(--radius-pill);
       letter-spacing: -0.01em;
-      border: 1px solid var(--apple-border-subtle);
+      border: 1px solid #c6ebd0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     }
 
     .header-date-badge svg {
       width: 14px;
       height: 14px;
-      color: var(--apple-blue);
+      color: var(--apple-green);
     }
 
     /* Apple Privacy Notice Bar */
@@ -169,19 +170,19 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(0, 0, 0, 0.025);
+      background: rgba(255, 255, 255, 0.75);
       border-radius: var(--radius-md);
       padding: 10px 14px;
       margin-top: 18px;
       font-size: 0.8rem;
-      color: var(--apple-text-secondary);
-      border: 1px solid rgba(0, 0, 0, 0.04);
+      color: #2d5c38;
+      border: 1px solid rgba(52, 199, 89, 0.25);
     }
 
     .storage-notice svg {
       width: 16px;
       height: 16px;
-      color: var(--apple-blue);
+      color: var(--apple-green);
       flex-shrink: 0;
     }
 
